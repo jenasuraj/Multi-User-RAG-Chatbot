@@ -4,7 +4,7 @@ import axios from "axios";
 import { ChangeEvent, FormEvent, useRef, useState} from "react";
 import {ChatHistory} from "../types/ChatTypes";
 import { GrUpload } from "react-icons/gr";
-
+import { IoSearchOutline } from "react-icons/io5";
 
 
 export default function Home() {
@@ -136,7 +136,7 @@ export default function Home() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-zinc-100 px-4 py-8">
       <section className="flex w-full max-w-3xl flex-col gap-4">
-        <div className="h-[520px] overflow-y-auto rounded-lg border border-zinc-200 bg-white p-6 shadow-sm">
+        <div className="h-[520px] overflow-y-auto rounded-lg border border-zinc-200 bg-white [scrollbar-width:none] [&::-webkit-scrollbar]:hidden p-6 shadow-sm">
           <div className="flex flex-col gap-5">
             {chatHistory.map((chat, index) => (
               <div
@@ -202,16 +202,16 @@ export default function Home() {
               onClick={() =>
                 fileInputRef.current?.click()
               }
-              className="rounded-md border border-zinc-300 bg-white px-4 py-1 flex items-center justify-center text-base font-medium text-zinc-900 hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-60"
+              className="rounded-md border border-zinc-300 bg-white px-5 py-1 flex items-center justify-center text-base font-medium text-zinc-900 hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-60"
             >
               <GrUpload className=" inline-block" />
             </button>
 
             <button
               type="submit"
-              className="rounded-md bg-zinc-900 px-6 py-3 text-base font-medium text-white hover:bg-zinc-700"
+              className="rounded-md bg-zinc-900 px-4 py-1 text-base font-medium text-white hover:bg-zinc-700"
             >
-              Submit
+              <IoSearchOutline size={25} color="white"/>
             </button>
           </div>
 

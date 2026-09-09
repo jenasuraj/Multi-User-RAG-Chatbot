@@ -1,56 +1,50 @@
-import os
-from dotenv import load_dotenv
-from langchain.agents import AgentState, create_agent
-from langchain_core.messages import HumanMessage
-from langchain_core.runnables import RunnableConfig
-from langchain_openai import ChatOpenAI
-from langgraph.graph import END, START, StateGraph
-from graph.tools.memory_tool import fetch_user_memory, persist_user_memory
-from graph.tools.rag_tool import rag_retrieval
-from schema.Agent import AgentStateWithAuth, State
-load_dotenv()
+from schema.Agent import State
+from langgraph.graph import StateGraph, START, END
+from graph.nodes.supervisor import supervisor
+from graph.nodes.finalNode import finalNode
+from graph.nodes.webSearch import webSearch
+from graph.nodes.weather import weather
+from graph.nodes.rag import rag
+from langgraph.checkpoint.memory import InMemorySaver
 
 
 
-llm = ChatOpenAI(
-    api_key=os.getenv("OPENROUTER_API_KEY"),
-    base_url=os.getenv("OPENROUTER_BASE_URL"),
-    model="mistralai/mistral-small-2603",
-    streaming=True)
+async def router(state:State):
+    print("🧭 Router checking next agent")
+    if(len(state["agents"]) == 0):
+        print("Router -> finalNode")
+        return "finalNode"
+    else:
+        agentHouse = state["agents"][0]
+        for agent in agentHouse:
+            if(agentHouse[agent] == False):
+                print(f"Router -> {agent}")
+                return agent
+        
+        for plan in state["plans"]:
+            if(plan["status"] == "pending"):
+                print("Few plans were not completed, so loop again ->")
+                agent = plan["agent"]
+                if agent in state["agents"][0]:
+                    state["agents"][0][agent] = False
+                    print(f"➡️ Router -> {agent}")
+                    return agent
+        
+        print("🏁 Router -> finalNode")
+        return "finalNode"
+    
 
+graph_builder = StateGraph(State)
+graph_builder.add_node("supervisor", supervisor)
+graph_builder.add_node("finalNode", finalNode)
+graph_builder.add_node("web_search", webSearch)
+graph_builder.add_node("weather", weather)
+graph_builder.add_node("rag", rag)
 
+graph_builder.add_edge(START, "supervisor")
+for agent_node in ["supervisor","web_search","weather","rag"]:
+    graph_builder.add_conditional_edges(agent_node,router,["web_search","weather","rag","finalNode"])
+graph_builder.add_edge("finalNode",END)
 
-rag_agent = create_agent(
-    model=llm,
-    tools=[rag_retrieval, persist_user_memory, fetch_user_memory],
-    system_prompt=(
-        "You are a polite RAG chatbot. First use fetch_user_memory so you know "
-        "the logged-in user. Use rag_retrieval when the user asks about "
-        "uploaded PDFs or document context. Use persist_user_memory when the "
-        "user shares stable, useful personal details like their name, hobbies, "
-        "preferences, goals, or ongoing projects."
-    ),
-    state_schema=AgentStateWithAuth,
-)
-
-
-
-
-async def executer(state: State, config: RunnableConfig):
-    response = await rag_agent.ainvoke(
-        {
-            "messages": state["messages"],
-            "auth_token": state["auth_token"],
-        },
-        config=config,
-    )
-    return {"messages": [HumanMessage(content=response["messages"][-1].content)]}
-
-
-
-
-builder = StateGraph(State)
-builder.add_node("executer", executer)
-builder.add_edge(START, "executer")
-builder.add_edge("executer", END)
-graph = builder.compile()
+memory = InMemorySaver() # Use memory for local/dev, or PostgresSaver/Redis Saver for production
+graph = graph_builder.compile()

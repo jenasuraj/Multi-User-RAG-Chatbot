@@ -8,16 +8,11 @@ from lib.auth import JWT_ALGORITHM, JWT_SECRET
 from lib.db import PGVECTOR_DATABASE_URL
 
 
-embeddings = HuggingFaceEmbeddings(
-    model_name="sentence-transformers/all-mpnet-base-v2"
-)
+embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2")
 
 
 @tool
-def rag_retrieval(
-    query: str,
-    auth_token: Annotated[str, InjectedState("auth_token")],
-) -> str:
+def rag_retrieval( query: str, auth_token: Annotated[str, InjectedState("auth_token")]): # InjectedState means Do not let the LLM provide this argument. Take this value from LangGraph state automatically.
     """Search the logged-in user's uploaded PDF chunks."""
     payload = jwt.decode(
         auth_token,

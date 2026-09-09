@@ -1,9 +1,7 @@
 from typing import Annotated
-
 import jwt
 from langchain.tools import tool
 from langgraph.prebuilt import InjectedState
-
 from lib.auth import JWT_ALGORITHM, JWT_SECRET
 from lib.db import db_session
 
