@@ -1,9 +1,9 @@
-import { LoginPage } from "@/features/auth/LoginPage";
+import { TodosPage } from "@/features/todos/TodosPage";
 
 const Page = () => {
   return (
     <main>
-      <LoginPage />
+      <TodosPage />
     </main>
   );
 };

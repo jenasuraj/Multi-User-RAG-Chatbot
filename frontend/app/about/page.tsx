@@ -1,9 +1,9 @@
-import { LoginPage } from "@/features/auth/LoginPage";
+import { AboutPage } from "@/features/about/AboutPage";
 
 const Page = () => {
   return (
     <main>
-      <LoginPage />
+      <AboutPage />
     </main>
   );
 };

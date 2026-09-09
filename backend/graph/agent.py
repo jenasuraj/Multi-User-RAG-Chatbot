@@ -4,7 +4,7 @@ from graph.nodes.supervisor import supervisor
 from graph.nodes.finalNode import finalNode
 from graph.nodes.webSearch import webSearch
 from graph.nodes.weather import weather
-from graph.nodes.rag import rag
+from graph.nodes.memory_agent import memory_agent
 from langgraph.checkpoint.memory import InMemorySaver
 
 
@@ -39,11 +39,11 @@ graph_builder.add_node("supervisor", supervisor)
 graph_builder.add_node("finalNode", finalNode)
 graph_builder.add_node("web_search", webSearch)
 graph_builder.add_node("weather", weather)
-graph_builder.add_node("rag", rag)
+graph_builder.add_node("memory_agent", memory_agent)
 
 graph_builder.add_edge(START, "supervisor")
-for agent_node in ["supervisor","web_search","weather","rag"]:
-    graph_builder.add_conditional_edges(agent_node,router,["web_search","weather","rag","finalNode"])
+for agent_node in ["supervisor","web_search","weather","memory_agent"]:
+    graph_builder.add_conditional_edges(agent_node,router,["web_search","weather","memory_agent","finalNode"])
 graph_builder.add_edge("finalNode",END)
 
 memory = InMemorySaver() # Use memory for local/dev, or PostgresSaver/Redis Saver for production

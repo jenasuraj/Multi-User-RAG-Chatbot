@@ -18,7 +18,7 @@ def is_direct_response(state: State):
 
 
 async def finalNode(state: State):
-    print("Final node entered")
+    print("Final node entered",state)
     if is_direct_response(state):
         print("Final node generating direct response")
         response = await synthesizer_llm.ainvoke([
@@ -51,10 +51,10 @@ async def finalNode(state: State):
         {state["webSearch"]}
         """
 
-    if any(plan["agent"] == "rag" for plan in plans):
+    if any(plan["agent"] == "memory_agent" for plan in plans):
         final_context += f"""
-        RAG memory:
-        {state["rag"]}
+        Memory/document context:
+        {state.get("memory_agent", [])}
         """
 
     if any(plan["agent"] == "coding" for plan in plans):

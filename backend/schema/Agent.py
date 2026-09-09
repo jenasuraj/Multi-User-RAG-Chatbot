@@ -23,10 +23,11 @@ class State(TypedDict):
     agents: list[AgentHouse]
     webSearch: Annotated[list, add_messages]
     weather: Annotated[list, add_messages]
-    rag: Annotated[list, add_messages]
+    memory_agent: Annotated[list, add_messages]
     coding: Annotated[list, add_messages]
     auth_token: str
     normalResponse: bool
+    calledInitialLongTermMemory: bool
     
 
 class AgentState(BaseModel):
