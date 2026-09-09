@@ -59,14 +59,12 @@ const Page = () => {
         console.log("Register response:", response.data);
       }
 
-      window.location.replace("/");
+      window.location.replace("/dashboard");
     } catch (error) {
       console.log("API error:", error);
 
       if (axios.isAxiosError(error)) {
-        setError(
-          error.response?.data?.detail || "Something went wrong."
-        );
+        setError(error.response?.data?.detail || "Something went wrong.");
       } else {
         setError("Something went wrong.");
       }
@@ -94,10 +92,7 @@ const Page = () => {
 
           {!isLogin && (
             <div className="flex flex-col gap-2">
-              <label
-                htmlFor="name"
-                className="text-sm font-medium text-gray-700"
-              >
+              <label htmlFor="name" className="text-sm font-medium text-gray-700">
                 Name
               </label>
 
@@ -109,27 +104,13 @@ const Page = () => {
                 onChange={handleChange}
                 placeholder="Enter your name"
                 required
-                className="
-                  rounded-lg
-                  border
-                  border-gray-300
-                  bg-white
-                  px-4
-                  py-3
-                  text-black
-                  placeholder:text-gray-400
-                  outline-none
-                  focus:border-black
-                "
+                className="rounded-lg border border-gray-300 bg-white px-4 py-3 text-black placeholder:text-gray-400 outline-none focus:border-black"
               />
             </div>
           )}
 
           <div className="flex flex-col gap-2">
-            <label
-              htmlFor="email"
-              className="text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="email" className="text-sm font-medium text-gray-700">
               Email
             </label>
 
@@ -141,26 +122,12 @@ const Page = () => {
               onChange={handleChange}
               placeholder="Enter your email"
               required
-              className="
-                rounded-lg
-                border
-                border-gray-300
-                bg-white
-                px-4
-                py-3
-                text-black
-                placeholder:text-gray-400
-                outline-none
-                focus:border-black
-              "
+              className="rounded-lg border border-gray-300 bg-white px-4 py-3 text-black placeholder:text-gray-400 outline-none focus:border-black"
             />
           </div>
 
           <div className="flex flex-col gap-2">
-            <label
-              htmlFor="password"
-              className="text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="password" className="text-sm font-medium text-gray-700">
               Password
             </label>
 
@@ -172,50 +139,21 @@ const Page = () => {
               onChange={handleChange}
               placeholder="Enter your password"
               required
-              className="
-                rounded-lg
-                border
-                border-gray-300
-                bg-white
-                px-4
-                py-3
-                text-black
-                placeholder:text-gray-400
-                outline-none
-                focus:border-black
-              "
+              className="rounded-lg border border-gray-300 bg-white px-4 py-3 text-black placeholder:text-gray-400 outline-none focus:border-black"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="
-              mt-2
-              rounded-lg
-              bg-black
-              px-4
-              py-3
-              font-medium
-              text-white
-              transition
-              hover:bg-gray-800
-              disabled:cursor-not-allowed
-              disabled:opacity-60
-            "
+            className="mt-2 rounded-lg bg-black px-4 py-3 font-medium text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {loading
-              ? "Please wait..."
-              : isLogin
-              ? "Login"
-              : "Register"}
+            {loading ? "Please wait..." : isLogin ? "Login" : "Register"}
           </button>
         </form>
 
         <div className="mt-6 text-center text-sm text-gray-600">
-          {isLogin
-            ? "Don't have an account?"
-            : "Already have an account?"}
+          {isLogin ? "Don't have an account?" : "Already have an account?"}
 
           <button
             type="button"
