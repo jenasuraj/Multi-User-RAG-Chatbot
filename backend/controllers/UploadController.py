@@ -44,7 +44,7 @@ def read_pdf(contents: bytes):
 
 async def upload_pdf(request: Request,pdf: UploadFile = File(...),db: Database = Depends(get_db)):
     user_id = get_user_id_from_request(request)
-    user = db.query("SELECT id FROM users WHERE id = %s", (user_id))
+    user = db.query("SELECT id FROM users WHERE id = %s", (user_id,))
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
 

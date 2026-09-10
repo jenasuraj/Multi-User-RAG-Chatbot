@@ -2,8 +2,6 @@ import Link from "next/link";
 import { FiDatabase, FiGithub, FiMail } from "react-icons/fi";
 
 const footerLinks = [
-  { href: "/about", label: "About" },
-  { href: "/todos", label: "Todos" },
   { href: "/dashboard", label: "Dashboard" },
   { href: "/contact", label: "Contact" },
 ];
@@ -32,19 +30,6 @@ export const Footer = () => {
           </div>
         </div>
 
-        <div className="flex flex-col justify-between gap-4 border-t border-emerald-100 pt-6 text-sm text-slate-500 sm:flex-row">
-          <p>(c) 2026 Nexora AI. Built for calmer document work.</p>
-          <div className="flex gap-4">
-            <a href="mailto:hello@nexora.ai" className="inline-flex items-center gap-2 transition hover:text-emerald-800">
-              <FiMail aria-hidden="true" />
-              hello@nexora.ai
-            </a>
-            <a href="https://github.com" className="inline-flex items-center gap-2 transition hover:text-emerald-800">
-              <FiGithub aria-hidden="true" />
-              GitHub
-            </a>
-          </div>
-        </div>
       </div>
     </footer>
   );

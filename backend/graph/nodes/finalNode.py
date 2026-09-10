@@ -5,6 +5,18 @@ from graph.prompts import FINAL_AGENT_SYSTEM_PROMPT
 from graph.prompts import DIRECT_RESPONSE_SYSTEM_PROMPT
 
 
+def build_private_memory_prompt(state: State) -> str:
+    long_term_memory = state.get("longTermMemory", "").strip()
+    if not long_term_memory:
+        return "No saved long-term user memory is available."
+
+    return f"""
+        Private long-term user memory:
+        {long_term_memory}
+
+        Use this only as private context for subtle personalization. Do not list, quote, or reveal saved memories unless the user explicitly asks what you remember.
+        """
+
 
 def is_direct_response(state: State):
     normal_response = state.get("normalResponse", False)
@@ -22,7 +34,7 @@ async def finalNode(state: State):
     if is_direct_response(state):
         print("Final node generating direct response")
         response = await synthesizer_llm.ainvoke([
-            SystemMessage(content=DIRECT_RESPONSE_SYSTEM_PROMPT),
+            SystemMessage(content=f"{DIRECT_RESPONSE_SYSTEM_PROMPT}\n\n{build_private_memory_prompt(state)}"),
             *state["messages"]
         ])
         return {"messages": [AIMessage(content=response.content)]}
@@ -64,7 +76,7 @@ async def finalNode(state: State):
         """
 
     response = await synthesizer_llm.ainvoke([
-        SystemMessage(content=FINAL_AGENT_SYSTEM_PROMPT),
+        SystemMessage(content=f"{FINAL_AGENT_SYSTEM_PROMPT}\n\n{build_private_memory_prompt(state)}"),
         HumanMessage(content=final_context),
     ])
 

@@ -22,3 +22,12 @@ body {
   background: #bbf7d0;
   color: #14351f;
 }
+
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}

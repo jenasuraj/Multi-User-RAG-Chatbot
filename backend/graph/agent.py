@@ -46,5 +46,5 @@ for agent_node in ["supervisor","web_search","weather","memory_agent"]:
     graph_builder.add_conditional_edges(agent_node,router,["web_search","weather","memory_agent","finalNode"])
 graph_builder.add_edge("finalNode",END)
 
-memory = InMemorySaver() # Use memory for local/dev, or PostgresSaver/Redis Saver for production
-graph = graph_builder.compile()
+memory = InMemorySaver() # Use memory for local/dev, or PostgresSaver/RedisSaver for production
+graph = graph_builder.compile(checkpointer=memory)

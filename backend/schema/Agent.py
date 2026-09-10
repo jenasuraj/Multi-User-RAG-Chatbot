@@ -28,6 +28,7 @@ class State(TypedDict):
     auth_token: str
     normalResponse: bool
     calledInitialLongTermMemory: bool
+    longTermMemory: str
     
 
 class AgentState(BaseModel):
@@ -43,3 +44,4 @@ class AgentStateWithAuth(AgentState):
 
 class UserPayload(BaseModel):
     query: str
+    thread_id: str

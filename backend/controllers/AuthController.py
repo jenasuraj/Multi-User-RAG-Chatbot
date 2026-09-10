@@ -1,7 +1,7 @@
 import bcrypt
 from fastapi import Depends, HTTPException, Response, status
 from pydantic import BaseModel
-from lib.auth import create_token, set_auth_cookie
+from lib.auth import AUTH_COOKIE_NAME, create_token, set_auth_cookie
 from lib.db import Database, get_db
 from schema.AuthSchema import RegisterCred,LoginCred
 
@@ -77,3 +77,13 @@ async def login_user(user_credentials: LoginCred,response: Response,db: Database
             "email": user[2],
         },
     }
+
+
+async def logout_user(response: Response):
+    response.delete_cookie(
+        key=AUTH_COOKIE_NAME,
+        path="/",
+        samesite="lax",
+        secure=False,
+    )
+    return {"message": "Logged out successfully"}

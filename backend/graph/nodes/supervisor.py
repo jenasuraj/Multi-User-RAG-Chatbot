@@ -1,9 +1,8 @@
-from graph.llm import supervisor_llm,synthesizer_llm
+from graph.llm import synthesizer_llm
 from graph.prompts import SUPERVISOR_SYSTEM_PROMPT as SYSTEM_PROMPT
-from langchain_core.messages import SystemMessage, AIMessage
+from langchain_core.messages import SystemMessage
 from schema.Agent import AgentState, State
 import jwt
-from langchain.tools import tool
 from lib.auth import JWT_ALGORITHM, JWT_SECRET
 from lib.db import db_session
 MEMORY_TABLE = "long_term_memory"
@@ -37,13 +36,9 @@ def boolChecker(value):
 
 async def supervisor(state: State):
     if not state.get("calledInitialLongTermMemory") is True:
-        LongTermMemoryResponse = await fetchAllMemoryContent(state["auth_token"])
-        LONG_TERM_MEMORY_RESPONSE =  [AIMessage(content=f"""
-        All information by the user as per the long term database : 
-        {LongTermMemoryResponse}                      
-        """)]
+        long_term_memory = await fetchAllMemoryContent(state["auth_token"])
     else:
-        LONG_TERM_MEMORY_RESPONSE =  [AIMessage(content="...")]    
+        long_term_memory = state.get("longTermMemory", "")
 
     response = await synthesizer_llm.with_structured_output(AgentState).ainvoke([
         SystemMessage(content=SYSTEM_PROMPT),
@@ -68,7 +63,7 @@ async def supervisor(state: State):
             "agents": [{}],
             "normalResponse": True,
             "calledInitialLongTermMemory": True,
-            "messages":LONG_TERM_MEMORY_RESPONSE
+            "longTermMemory": long_term_memory
             }
 
     agentHouse = {}
@@ -82,5 +77,5 @@ async def supervisor(state: State):
         "agents": [agentHouse],
         "normalResponse": normal_response,
         "calledInitialLongTermMemory": True,
-        "messages":LONG_TERM_MEMORY_RESPONSE
+        "longTermMemory": long_term_memory
        }
