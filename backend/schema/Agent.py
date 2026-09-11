@@ -26,9 +26,11 @@ class State(TypedDict):
     memory_agent: Annotated[list, add_messages]
     coding: Annotated[list, add_messages]
     auth_token: str
+    thread_id: str
     normalResponse: bool
     calledInitialLongTermMemory: bool
     longTermMemory: str
+    agentCallCount: int
     
 
 class AgentState(BaseModel):
@@ -44,4 +46,8 @@ class AgentStateWithAuth(AgentState):
 
 class UserPayload(BaseModel):
     query: str
+    thread_id: str
+
+
+class ThreadPayload(BaseModel):
     thread_id: str

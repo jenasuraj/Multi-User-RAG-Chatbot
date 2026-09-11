@@ -2,7 +2,7 @@ from fastapi import Depends, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from lib.auth import get_auth_token, get_user_id_from_request, get_user_id_from_token
 from lib.db import Database, get_db
-from schema.Agent import UserPayload
+from schema.Agent import ThreadPayload, UserPayload
 from graph.agent import graph
 from langchain_core.messages import HumanMessage
 from langchain_core.messages import BaseMessageChunk
@@ -47,6 +47,29 @@ async def create_chat_thread(request: Request, db: Database = Depends(get_db)):
     }
 
 
+async def mark_chat_thread_bad(request: Request, payload: ThreadPayload, db: Database = Depends(get_db)):
+    user_id = get_user_id_from_request(request)
+    thread = db.query(
+        """
+        UPDATE chat_threads
+        SET status = %s
+        WHERE thread_id = %s AND user_id = %s
+        RETURNING id, thread_id, status, user_id
+        """,
+        ("bad", payload.thread_id, user_id),
+    )
+    if not thread:
+        raise HTTPException(status_code=404, detail="Thread not found")
+
+    thread = thread[0]
+    return {
+        "id": thread[0],
+        "thread_id": thread[1],
+        "status": thread[2],
+        "user_id": thread[3],
+    }
+
+
 async def call_chatbot(request: Request, payload: UserPayload, db: Database = Depends(get_db)):
     token = get_auth_token(request)
     user_id = get_user_id_from_token(token)
@@ -63,6 +86,7 @@ async def call_chatbot(request: Request, payload: UserPayload, db: Database = De
             {
                 "messages": [HumanMessage(content=payload.query)],
                 "auth_token": token,
+                "thread_id": payload.thread_id,
             },
             config,
             stream_mode=["messages"],
